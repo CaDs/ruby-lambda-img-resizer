@@ -248,3 +248,9 @@ template.yaml
 # Local development bundle
 .vendor
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
+
+# Rubocop
+.rubocop.yml
+
+# SAM package
+packaged.yaml

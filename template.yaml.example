@@ -1,40 +1,66 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    image-resizer-lambda
+    to_be_deleted
 
-    Sample SAM Template for image-resizer-lambda
+    Sample SAM Template for to_be_deleted
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-    Function:
-        Timeout: 3
+Parameters:
+    OriginalBucketName:
+        Default: ruby-lambda-prototype-images-originals
+        Type: String
+
+    ResizesBucketName:
+        Default: ruby-lambda-prototype-images-resized
+        Type: String
 
 
 Resources:
-
-    HelloWorldFunction:
+    ImageResizerOriginalBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName:
+                Ref: OriginalBucketName
+    ImageResizerResizedBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName:
+                Ref: ResizesBucketName
+    ImageResizerFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
-            CodeUri: hello_world/
+            CodeUri: image_resizer/
             Handler: app.lambda_handler
             Runtime: ruby2.5
-            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+            Timeout: 180
+            MemorySize: 1024
+            Environment:
                 Variables:
-                    PARAM1: VALUE
+                    RESIZED_IMAGES_BUCKET:
+                        Ref: ResizesBucketName
+                    ORIGINAL_IMAGES_BUCKET:
+                        Ref: OriginalBucketName
             Events:
-                HelloWorld:
-                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                ObjectCreationEvent:
+                    Type: S3
                     Properties:
-                        Path: /hello
-                        Method: get
+                        Bucket:
+                            Ref: ImageResizerOriginalBucket
+                        Events: 's3:ObjectCreated:*'
 
 Outputs:
+    ImageResizerOriginalBucket:
+        Description: 'Bucket for the original images'
+        Value: !GetAtt ImageResizerOriginalBucket.Arn
 
-    HelloWorldApi:
-      Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    ImageResizerResizedBucket:
+        Description: 'Bucket for the resized images'
+        Value: !GetAtt ImageResizerResizedBucket.Arn
 
-    HelloWorldFunction:
-      Description: "Hello World Lambda Function ARN"
-      Value: !GetAtt HelloWorldFunction.Arn
+    ImageResizerFunction:
+      Description: "Image Resizer Lambda Function ARN"
+      Value: !GetAtt ImageResizerFunction.Arn
+
+    ImageResizerFunctionIamRole:
+      Description: "Implicit IAM Role created for Image Resizer function"
+      Value: !GetAtt ImageResizerFunctionRole.Arn

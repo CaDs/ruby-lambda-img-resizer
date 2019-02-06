@@ -1,0 +1,260 @@
+---
+
+# 自動生成されるものはチェック対象から除外する
+AllCops:
+  TargetRubyVersion: 2.5
+  Exclude:
+    - "vendor/**/*" # rubocop config/default.yml
+    - "db/schema.rb"
+  DisplayCopNames: true
+Rails:
+  Enabled: true
+
+##################### Style ##################################
+
+# redirect_to xxx and return のイディオムを維持したい
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+# 日本語のコメントを許可する
+Style/AsciiComments:
+  Enabled: false
+
+# option 等、明示的にハッシュにした方が分かりやすい場合もある
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+# たまには ブロックコメントを使いたい。特にspotバッチの説明とか、背景を丁寧に説明する時に楽ちん。
+Style/BlockComments:
+  Enabled: false
+
+# https://github.com/eightcard/www/issues/2020 でnestedとcompactを混ぜた形をとることとした。
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/CollectionMethods:
+  PreferredMethods:
+    detect: "detect"
+    find: "detect"
+    inject: "inject"
+    reduce: "inject"
+
+# Hash#has_key? は許可したい
+Style/PreferredHashMethods:
+  Enabled: false
+
+# ドキュメントの無い public class を許可する
+Style/Documentation:
+  Enabled: false
+
+# !! のイディオムは積極的に使う
+Style/DoubleNegation:
+  Enabled: false
+
+# メソッドチェーンの改行は行頭に . を入れる
+Layout/DotPosition:
+  EnforcedStyle: leading
+
+# 明示的に else で nil を返すのは分かりやすいので許可する
+Style/EmptyElse:
+  EnforcedStyle: empty
+
+# いずれかに揃えるのならば `sprintf` や `format` より String#% が好きです
+Style/FormatString:
+  EnforcedStyle: percent
+
+# if 文の中に 3 行程度のブロックを書くぐらいは許容した方が現実的
+Style/GuardClause:
+  MinBodyLength: 5
+
+# 同じ hash 内で記法を混ぜない
+# rake タスクの順序の hash は rocket を許可する
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+  Exclude:
+    - "**/*.rake"
+    - "Rakefile"
+
+# 条件式の方を意識させたい場合には後置の if/unless を使わない方が分かりやすい
+Style/IfUnlessModifier:
+  Enabled: false
+
+# ({ と hash を開始した場合に ( の位置にインデントさせる
+# そもそも {} が必要ない可能性が高いが Style/BracesAroundHashParameters はチェックしないことにしたので
+Layout/IndentHash:
+  EnforcedStyle: consistent
+
+# private/protected は一段深くインデントしない
+Layout/IndentationConsistency:
+  Enabled: false
+
+# scope 等は複数行でも lambda ではなく ->{} で揃えた方が見た目が綺麗
+Style/Lambda:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+# has_ から始まるメソッドは許可する
+Naming/PredicateName:
+  NamePrefixBlacklist:
+    - "is_"
+    - "have_"
+  NamePrefix:
+    - "is_"
+    - "have_"
+
+# 特に model 内において、ローカル変数とメソッド呼び出しの区別をつけた方が分かりやすい場合が多い
+Style/RedundantSelf:
+  Enabled: false
+
+# 受け取り側で multiple assignment しろというのを明示
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+# テスト対象のメソッドが例外を投げる場合に、例外を投げる以外のことをテストしたい時などに便利。
+Style/RescueModifier:
+  Enabled: false
+
+# fail と使い分ける必要ナシ
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+# `||` も align に使うことがあるので追加する
+Layout/SpaceAroundOperators:
+  AllowForAlignment:
+    - "="
+    - "=>"
+    - "||"
+    - "&&"
+    - "+"
+    - "-"
+    - "*"
+    - "/"
+    - "<<"
+    - ">>"
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+# auto-correct 時に Style/StringLiterals とカニバって無限ループになる (v0.28.0)
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+# いくらなんでも inject { |a, e| } は短すぎるので分かりやすい名前をつけたい
+Style/SingleLineBlockParams:
+  Enabled: false
+
+# * migrate
+# * jbuilder
+# * model の association
+# * controller の callback
+# 辺りの桁揃えで引っかかるので全体的にチェックしない
+Layout/SpaceBeforeFirstArg:
+  Enabled: false
+
+# メソッドの引数が複数行の場合はケツカンマを入れる
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+# 配列が複数行の場合はケツカンマを入れる
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+# ハッシュが複数行の場合はケツカンマを入れる
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# ブロック呼び出しに利用するブレース周辺のスペースに関するチェックを不要とする
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
+
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+
+# 2項演算子を複数行に分けて書く場合、単にインデントすれば良いことにする
+# 例えば https://github.com/eightcard/www/commit/e6a3caa75894e139b96a2be33c2f9ee1f51755e7
+# の修正後のスタイルが推奨される。
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+##################### Lint ##################################
+# rspec の idiom
+# See: https://github.com/bbatsov/rubocop/issues/4222
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "spec/**/*"
+
+# * 同名のメソッドがある場合にローカル変数に `_` を付けることを禁止する
+Lint/UnderscorePrefixedVariableName:
+  Enabled: true
+
+# 子クラスで実装させるつもりのメソッドで引っかかるので
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+# 既に使用している箇所が結構あるし、特に悪いものとも思わないので
+Lint/Loop:
+  Enabled: false
+
+Lint/PercentStringArray:
+  Exclude:
+    # Secure Headersの設定では %w['self'] といった記述は意図的なもの。
+    - "config/initializers/secure_headers.rb"
+
+##################### Metrics ##################################
+
+# 30 まではギリギリ許せる範囲だった
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/ClassLength:
+  Enabled: false
+
+# 6 は強すぎるので緩める
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+# * 警告 120文字
+# * 禁止 160文字
+# のイメージ
+Metrics/LineLength:
+  Max: 160
+  Exclude:
+    - "db/migrate/*.rb"
+
+# メソッドの行数制限をしない
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+# 分岐の数。ガード句を多用しているとデフォルト 7 だと厳しい
+Metrics/PerceivedComplexity:
+  Max: 8
+
+# DSLとして使われているケースでは、行数の多いブロックは存在しえる
+Metrics/BlockLength:
+  Exclude:
+    - config/routes.rb
+    - spec/**/*.rb
+    - config/initializers/secure_headers.rb
+  ExcludedMethods:
+    - configure
+    - namespace
+
+# 複数行のメソッドのインデント
+# alignedだと下記のようになる
+# hoge = Hoge
+#        .foo
+# が、変数がない場合はインデント2で改行する必要があり、このような複雑な記述方法を設定できないエディタがある
+Layout/MultilineMethodCallIndentation:
+  Enabled: false
+
+Layout/LeadingCommentSpace:
+  Exclude:
+    - spec/teaspoon_env.rb
+
+Style/RescueStandardError:
+  EnforcedStyle: implicit

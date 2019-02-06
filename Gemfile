@@ -1,8 +1,13 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "httparty"
+gem 'httparty'
+
+group :develop do
+  gem 'rubocop'
+end
+
 
 group :test do
-  gem "test-unit"
-  gem "mocha"
+  gem 'rspec'
+  gem 'mocha'
 end
